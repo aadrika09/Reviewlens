@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>ReviewLens – should you buy it?</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@800&family=DM+Sans:wght@400;700&display=swap"><link rel="stylesheet" href="style.css"></head><body><div class="bg" aria-hidden="true"><span class="a"></span><span class="b"></span><span class="c"></span><span class="d"></span><span class="e"></span><span class="f"></span></div>
+<a class="brand" href="/"><i></i>ReviewLens</a>
+<main class="page">
+ <section class="hero"><h1>Will it be right for <u>you</u>?</h1>
+ <p>Tell us what you want to buy and why. We read the reviews and judge the product against your reason, not the average buyer's.</p></section>
+ <form class="ticket" id="f">
+  <div><label for="brand">Brand</label><input id="brand" required placeholder="Sony">
+  <label for="pname">Product name</label><input id="pname" required placeholder="WH-1000XM5"></div>
+  <div><label for="req">What do you need from it?</label><textarea id="req" required placeholder="Strong noise cancelling for a daily metro commute"></textarea>
+  <label for="why">Why are you buying it?</label><textarea id="why" required placeholder="My earphones broke and I'm on calls all day"></textarea></div>
+  <button id="go">Analyse reviews</button><div class="err" id="err" role="alert"></div>
+ </form>
+</main>
+<script>
+const f=document.getElementById('f'),go=document.getElementById('go'),err=document.getElementById('err'),$=id=>document.getElementById(id).value.trim();
+f.onsubmit=async e=>{e.preventDefault();err.style.display='none';go.disabled=true;go.textContent='Reading reviews…';
+ const body={brand:$('brand'),name:$('pname'),requirement:$('req'),reason:$('why')};
+ try{const r=await fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const d=await r.json();if(!r.ok)throw new Error(d.detail||d.error||'Request failed');
+  sessionStorage.setItem('rl',JSON.stringify({input:body,result:d}));location.href='result.html';
+ }catch(x){err.textContent='Analysis failed: '+x.message+'. Check both servers are running, then try again.';err.style.display='block';go.disabled=false;go.textContent='Analyse reviews';}};
+</script></body></html>
